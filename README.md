@@ -5,3 +5,6 @@ February 12, 2024
 
 February 14, 2024
 - E2: Solving Linear Advection using Finite Difference
+
+February 19, 2024
+- E3: Leapfrog or Central Time Central Space (CTCS) scheme on solving Linear Advection: Stability and Filters
