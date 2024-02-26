@@ -8,3 +8,9 @@ February 14, 2024
 
 February 19, 2024
 - E3: Leapfrog or Central Time Central Space (CTCS) scheme on solving Linear Advection: Stability and Filters
+
+February 21, 2024
+- E4: semi-Lagrangian Scheme: Stability and Convergence
+
+February 26, 2024
+- E5: Forward FD Scheme for Solving Diffusion equation and its stability

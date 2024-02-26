@@ -11,3 +11,6 @@ February 19, 2024
 
 February 21, 2024
 - E4: semi-Lagrangian Scheme: Stability and Convergence
+
+February 26, 2024
+- E5: Forward FD Scheme for Solving Diffusion equation and its stability
