@@ -14,3 +14,6 @@ February 21, 2024
 
 February 26, 2024
 - E5: Forward FD Scheme for Solving Diffusion equation and its stability
+
+February 28, 2024
+- E6: Tri-Diagonal Matrix Algorithm (TDMA) for Solving Diffusion equation and its stability
