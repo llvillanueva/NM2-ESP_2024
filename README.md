@@ -17,3 +17,6 @@ February 26, 2024
 
 February 28, 2024
 - E6: Tri-Diagonal Matrix Algorithm (TDMA) for Solving Diffusion equation and its stability
+
+March 4, 2024
+- E7: Solving Advection-Diffusion equation using CTCS scheme
