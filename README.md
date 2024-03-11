@@ -20,3 +20,6 @@ February 28, 2024
 
 March 4, 2024
 - E7: Solving Advection-Diffusion equation using CTCS scheme
+
+March 11, 2024
+- E8: Solving Gravity Waves using CTCS & CSFT/BT scheme and their stabilities.
