@@ -1,5 +1,7 @@
 ## Numerical Methods II for Earth System Physics Diploma student
 
+### Part 1: Algorithm in solving DE in Geosciences
+
 February 12, 2024
 - E1: Finite Differences for Solving ODE: Stability and Convergence
 
@@ -23,3 +25,8 @@ March 4, 2024
 
 March 11, 2024
 - E8: Solving Gravity Waves using CTCS & CSFT/BT scheme and their stabilities.
+
+### Part 2: Data Analysis for Geosciences
+
+March 13, 2024
+- E1: Mean and Standard Deviation calculation
