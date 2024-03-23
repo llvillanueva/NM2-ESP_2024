@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy
+import iris
+
+from mpl_toolkits.basemap import Basemap
 
 def compute_mean(data_in):
     """
@@ -128,3 +131,51 @@ def t_student(data_in):
     print ('critical t-value:', t_crit)
     print("p-value:", p_value)
     return (b1, s_b1, t_score, p_value, t_crit)
+
+def regrid(data_in, grid, binary=True):
+    if binary:
+        data_gridded=data_in.regrid(grid, iris.analysis.Nearest())
+    else:
+        data_gridded=data_in.regrid(grid, iris.analysis.Linear())
+    #print (data_in, data_in_coarse)
+    
+    #let's check the regridding result
+    '''
+    plt.figure()
+    qplt.contourf(data_in[0], 25)
+    plt.figure()
+    qplt.contourf(data_coarse[0], 25)
+    plt.show()
+    '''
+    return data_gridded
+
+def create_map(D1, title):
+    fig=plt.figure()
+    ax=plt.gca()
+
+    bmap= Basemap(projection= 'gall', llcrnrlat= -90, urcrnrlat= 90, llcrnrlon=0, urcrnrlon= 360, resolution='l')
+    
+    lon= D1.coord('longitude').points
+    lat= D1.coord('latitude').points
+    
+    x,y=bmap(*np.meshgrid(lon,lat))
+    
+    contours=bmap.contourf(x,y, D1.data, levels=20, cmap='jet')
+    bmap.drawcoastlines()
+    
+    plt.colorbar()
+    plt.title(title)
+    plt.show()
+
+def interpolationM(data_in, lat, lon, Linear=True):
+    data_inter = {}
+    for i in range(len(lat)): #21=number of sites
+        site= [('latitude', lat[i] ), ('longitude', lon[i])]
+        if Linear:    
+            mslpa=data_in.interpolate(site, iris.analysis.Linear())
+        else:
+            mslpa=data_in.interpolate(site, iris.analysis.Nearest())
+
+        print(lat[i], lon[i], mslpa.data)
+        #f.write(str(lat[i])+' ' + str(lon[i])+' ' +str(mslpa.data))
+        

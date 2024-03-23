@@ -30,3 +30,9 @@ March 11, 2024
 
 March 13, 2024
 - E1: Mean and Standard Deviation calculation
+
+March 18, 2024
+- E2: Statistical Significance Tests and Linear Regression
+
+March 20, 2024
+- E3: Gridded data and interpolation methods
