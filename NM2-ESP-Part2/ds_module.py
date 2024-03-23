@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 import iris
+import pandas as pd
+import matplotlib.gridspec as gridspec
 
 from mpl_toolkits.basemap import Basemap
 
@@ -167,15 +169,49 @@ def create_map(D1, title):
     plt.title(title)
     plt.show()
 
-def interpolationM(data_in, lat, lon, Linear=True):
+def interpolationM(data_in, lat, lon):
     data_inter = {}
+    data_inter['latitude'] = lat
+    data_inter['longitude'] = lon
+    data_inter['Sea Level Pressure (hPa) - Linear'] = []
+    data_inter['Sea Level Pressure (hPa) - Nearest Neighbor'] = []
     for i in range(len(lat)): #21=number of sites
-        site= [('latitude', lat[i] ), ('longitude', lon[i])]
-        if Linear:    
-            mslpa=data_in.interpolate(site, iris.analysis.Linear())
-        else:
-            mslpa=data_in.interpolate(site, iris.analysis.Nearest())
+        site = [('latitude', lat[i] ), ('longitude', lon[i])]    
+        data_inter['Sea Level Pressure (hPa) - Linear'].append(data_in.interpolate(site, iris.analysis.Linear()).data)
+        data_inter['Sea Level Pressure (hPa) - Nearest Neighbor'].append(data_in.interpolate(site, iris.analysis.Nearest()).data)
+    data_inter = pd.DataFrame(data_inter)
+    return data_inter
 
-        print(lat[i], lon[i], mslpa.data)gridding
-        #f.write(str(lat[i])+' ' + str(lon[i])+' ' +str(mslpa.data))
-        
+
+def create_double_map(D1, D2, title1, title2):
+    fig = plt.figure(figsize=(12, 6))
+
+    # Define a grid layout with 1 row and 3 columns (2 for maps, 1 for colorbar)
+    gs = gridspec.GridSpec(1, 3, width_ratios=[1, 1, 0.05])
+
+    # Plot the first map
+    ax1 = plt.subplot(gs[0])
+    bmap1 = Basemap(projection='gall', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=0, urcrnrlon=360, resolution='l', ax=ax1)
+    lon1 = D1.coord('longitude').points
+    lat1 = D1.coord('latitude').points
+    x1, y1 = bmap1(*np.meshgrid(lon1, lat1))
+    contours1 = bmap1.contourf(x1, y1, D1.data, levels=20, cmap='jet')
+    bmap1.drawcoastlines()
+    ax1.set_title(title1)
+
+    # Plot the second map
+    ax2 = plt.subplot(gs[1])
+    bmap2 = Basemap(projection='gall', llcrnrlat=-90, urcrnrlat=90, llcrnrlon=0, urcrnrlon=360, resolution='l', ax=ax2)
+    lon2 = D2.coord('longitude').points
+    lat2 = D2.coord('latitude').points
+    x2, y2 = bmap2(*np.meshgrid(lon2, lat2))
+    contours2 = bmap2.contourf(x2, y2, D2.data, levels=20, cmap='jet')
+    bmap2.drawcoastlines()
+    ax2.set_title(title2)
+
+    # Add a shared colorbar
+    cbar_ax = plt.subplot(gs[2])
+    cbar = fig.colorbar(contours2, cax=cbar_ax, orientation='vertical')
+
+    plt.tight_layout()
+    plt.show()
