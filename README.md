@@ -36,3 +36,6 @@ March 18, 2024
 
 March 20, 2024
 - E3: Gridded data and interpolation methods
+
+March 25, 2024
+- E4: Fourier Transform and Spectral Analysis 
