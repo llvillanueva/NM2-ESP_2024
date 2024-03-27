@@ -39,3 +39,6 @@ March 20, 2024
 
 March 25, 2024
 - E4: Fourier Transform and Spectral Analysis 
+
+March 27, 2024
+- E4: Commonly used indexes in geoscience and python plotting

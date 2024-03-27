@@ -276,7 +276,13 @@ def extract_area(data_in, where):
         lat_min=-70
         lat_max=-50
         lon_min=0
-        lon_max=360   
+        lon_max=360  
+
+    if where=='NINO_3_4':
+        lat_min=-5
+        lat_max=5
+        lon_min=190
+        lon_max=240 
 
 
  #Define a geographical constraint based on the input coordinates 
@@ -345,7 +351,25 @@ def area_weighted(data_in):
                                  iris.analysis.MEAN,
                                   weights=cell_area)
  
-    return(data_out) 
+    return(data_out)
+
+
+def area_weighted_ENSO(data_in):
+ #call function to compute annuals mean from monthly means
+    #data_in=compute_annual_nc(data_in) 
+ 
+ #On a lat,long grid the grid-spacing reduces near the poles, we need to use area weights in our spatial mean to take into account
+ #the irregularity of the grid. To compute the area-weighted spatial mean we get the area of each cell using cartography.area_weights.  
+ #This uses the 'cell_area' attribute to calculate the area of each grid-box. 
+    data_in.coord('latitude').guess_bounds()
+    data_in.coord('longitude').guess_bounds()
+    cell_area = iris.analysis.cartography.area_weights(data_in)
+
+    data_out= data_in.collapsed(['latitude', 'longitude'],
+                                 iris.analysis.MEAN,
+                                  weights=cell_area)
+ 
+    return(data_out)
 
 def my_function_to_compute_FFT_1D(data_in):
 ##Call function to compute the 1D FFT
@@ -371,3 +395,46 @@ def my_function_to_compute_FFT_1D(data_in):
 ##Normalize the power spectrum relative to its maximum value
     Spec_1D_norm=Spec_1D/maximum
     return(Spec_1D_norm, nk)
+
+def compute_ENSO(data_in):
+#Compute area weighted mean
+    data_in=area_weighted_ENSO(data_in)
+    #compute a climatological mean (and its standard deviation) over the first 30 years
+    mean=data_in[:30*12].collapsed('time', iris.analysis.MEAN)
+    std_dev=data_in[:30*12].collapsed('time', iris.analysis.STD_DEV)
+    
+    #calculate anomalies:
+    ENSO=data_in-mean
+    
+    #apply a 5-month running mean:
+    months=ENSO.shape[0]
+    ENSO_5month=iris.cube.CubeList()
+    
+    for i in range (0, months-5):
+        ENSO_5month.append(ENSO[i:i+5].collapsed('time', iris.analysis.MEAN))
+    
+    ENSO_5month= ENSO_5month.merge_cube()
+
+    ENSO_norm=ENSO_5month/std_dev
+    return(ENSO_norm)
+
+
+def plot_ENSO(data_set, label, title):
+    fig=plt.figure(figsize=(12, 6), tight_layout=True)
+    ax=plt.gca()
+
+    months=len(data_set.data)
+    times=np.arange(0,months,1)
+    date= pd.date_range(start='1970-01-01', periods=len(times), freq='M')  #for monthly means 
+ #date= pd.date_range(start='1990-01-01', periods=len(times), freq='A') #for annual means
+    plt.plot(date, data_set.data, linewidth=3, label=label)
+    #plt.axhline(y=0.4)
+    #plt.axhline(y=-0.4)
+
+    plt.fill_between(date, 0.4, np.ma.masked_where(data_set.data <= 0.4, data_set.data) , alpha=0.5, facecolor='red')
+    plt.fill_between(date, -0.4, np.ma.masked_where(data_set.data >= -0.4, data_set.data) , alpha=0.5, facecolor='blue')
+    
+    plt.ylabel('C', fontsize=14)
+    plt.title(title, fontsize=16)
+    plt.legend()
+    plt.show()
